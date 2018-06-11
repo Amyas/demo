@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        background-color: #fff;
+    }
+    .dialog-mask {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+    .dialog {
+        position: absolute;
+        left: 50%;
+        top: 20%;
+        background-color: #fff;
+        padding: 10px;
+        min-width: 300px;
+        transform: translateX(-50%);
+    }
+    .dialog header {
+        display: flex;
+        justify-content: space-between;
+    }
+    .dialog header .close {
+        cursor: pointer;
+    }
+    .dialog footer {
+        display: flex;
+        justify-content: flex-end;
+    }
+    .dialog footer > div {
+        cursor: pointer;
+        padding: 5px 10px;
+        margin-left: 10px;
+        border: 1px solid #000;
+    }
+    .dialog .content {
+        padding: 20px 0;
+    }
+</style>
+<body>
+</body>
+<script>
+    function Dialog(){
+        this.style = {}
+    }
+    Dialog.prototype = {
+        constructor:Dialog,
+        show(option){
+            return new Promise((resolve,reject)=>{
+                this._initTemplate(option)
+                document.querySelector('.dialog-box .confirm').addEventListener('click',()=>{
+                    document.body.removeChild(this.dialogBox)
+                    resolve('confirm')
+                })
+                document.querySelector('.dialog-box .cancel').addEventListener('click',()=>{
+                    document.body.removeChild(this.dialogBox)
+                    reject('cancel')
+                })
+            })
+        },
+        _initTemplate(option){//* 创建HTML模板
+            var template = 
+            `
+            <div class="dialog-mask">
+                <div class="dialog">
+                    <header>
+                        <div class="title">${option.title || '提示'}</div>
+                        <div class="close">X</div>
+                    </header>
+                    <div class="content">${option.content || ''}</div>
+                    <footer>
+                        <div class="cancel">${option.cancel_text || '取消'}</div>
+                        <div class="confirm">${option.confirm_text || '确定'}</div>
+                    </footer>
+                </div>
+            </div>
+            `
+            this.dialogBox = document.createElement('div')
+            this.dialogBox.innerHTML = template
+            this.dialogBox.className = 'dialog-box'
+            this.dialogBox.style.display = 'block'
+            document.body.appendChild(this.dialogBox)
+        }
+
+    }
+    var dialog = new Dialog()
+    dialog.show({
+        title:'标题111',
+        content:'内容111',
+        confirm_text:'点击确定',
+        cancel_text:'点击取消'
+    })
+    .then(confirm=>{
+        console.log(confirm)
+    })
+    .catch(cancel=>{
+        console.log(cancel)
+    })
+</script>
+</html>
+
